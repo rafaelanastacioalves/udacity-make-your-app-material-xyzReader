@@ -53,6 +53,8 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getLoaderManager().initLoader(0, null, this);
 
