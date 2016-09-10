@@ -31,7 +31,10 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/fragment_article_detail"/>
+    <FrameLayout
+        android:id="@+id/article_fragment_container"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
     <ImageButton android:id="@+id/share_fab"
         android:stateListAnimator="@anim/fab_state_list_anim"
         android:background="@drawable/add_fab_background"
