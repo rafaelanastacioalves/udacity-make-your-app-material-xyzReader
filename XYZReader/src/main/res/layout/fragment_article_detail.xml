@@ -14,18 +14,19 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
+            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
+            app:expandedTitleMarginStart="72dp"
+            app:layout_scrollFlags="scroll">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar" tools:context="com.example.android.sunshine.app.DetailActivity"
                 android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
-                android:layout_marginLeft="@dimen/list_toolbar_side_margin"
-                app:layout_collapseMode="pin"
-                android:layout_marginRight="@dimen/list_toolbar_side_margin"
+                android:layout_height="match_parent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+
+
                 app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 >
             </android.support.v7.widget.Toolbar>
@@ -33,7 +34,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
-        android:id="@+id/scrollview"
+    android:id="@+id/scrollview"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -61,14 +62,13 @@
 
             <!--</FrameLayout>-->
 
-            <com.example.xyzreader.ui.MaxWidthLinearLayout
+            <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:maxWidth="@dimen/detail_card_max_width"
                 android:background="#fff"
-                android:elevation="@dimen/card_elevation"
                 android:layout_marginTop="@dimen/detail_card_top_margin">
 
                 <LinearLayout
@@ -117,11 +117,10 @@
                     android:textSize="@dimen/detail_body_text_size"
                     android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier" />
 
-            </com.example.xyzreader.ui.MaxWidthLinearLayout>
+            </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
-    <ImageButton android:id="@+id/share_fab"
+    <android.support.design.widget.FloatingActionButton android:id="@+id/share_fab"
         android:stateListAnimator="@anim/fab_state_list_anim"
-        android:background="@drawable/add_fab_background"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="@dimen/fab_margin"
         android:layout_marginBottom="@dimen/fab_margin"
