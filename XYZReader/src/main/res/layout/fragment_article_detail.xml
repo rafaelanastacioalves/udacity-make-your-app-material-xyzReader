@@ -3,9 +3,6 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
             <!--<FrameLayout-->
                 <!--android:id="@+id/photo_container"-->
@@ -84,7 +81,6 @@
                     android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier" />
 
             </com.example.xyzreader.ui.MaxWidthLinearLayout>
-        </FrameLayout>
     </android.support.v4.widget.NestedScrollView>
 
 

@@ -58,25 +58,25 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         getLoaderManager().initLoader(0, null, this);
 
-        mPagerAdapter = new MyPagerAdapter(getFragmentManager());
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setAdapter(mPagerAdapter);
-        mPager.setPageMargin((int) TypedValue
-                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
-        mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
-
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-
-
-            @Override
-            public void onPageSelected(int position) {
-                if (mCursor != null) {
-                    mCursor.moveToPosition(position);
-                }
-                mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
-//                updateUpButtonPosition();
-            }
-        });
+//        mPagerAdapter = new MyPagerAdapter(getFragmentManager());
+//        mPager = (ViewPager) findViewById(R.id.pager);
+//        mPager.setAdapter(mPagerAdapter);
+//        mPager.setPageMargin((int) TypedValue
+//                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
+//        mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
+//
+//        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+//
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                if (mCursor != null) {
+//                    mCursor.moveToPosition(position);
+//                }
+//                mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
+////                updateUpButtonPosition();
+//            }
+//        });
 
 //        mUpButtonContainer = findViewById(R.id.up_container);
 
@@ -117,7 +117,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mCursor = cursor;
-        mPagerAdapter.notifyDataSetChanged();
+//        mPagerAdapter.notifyDataSetChanged();
 
         // Select the start ID
         if (mStartId > 0) {
