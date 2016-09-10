@@ -12,6 +12,7 @@
         android:background="?colorPrimary">
 
         <android.support.design.widget.CollapsingToolbarLayout
+            android:elevation="@dimen/appbar_elevation"
             android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -45,10 +46,11 @@
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/detail_card_max_width"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top"
+                android:layout_gravity="top|center"
                 android:maxWidth="@dimen/detail_card_max_width"
+                android:elevation="@dimen/card_elevation"
                 android:background="#fff"
                 >
                 <FrameLayout
