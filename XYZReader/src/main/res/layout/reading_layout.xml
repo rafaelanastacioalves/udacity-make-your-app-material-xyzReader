@@ -12,24 +12,7 @@
     android:background="#fff"
     tools:showIn="@layout/fragment_article_detail">
 
-    <FrameLayout
-        android:id="@+id/photo_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="@dimen/appbar_elevation"
-        android:background="@color/photo_placeholder">
-        <!--suppress AndroidLintContentDescription -->
-        <ImageView
-            android:id="@+id/photo"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="112dp"
-            android:background="@drawable/photo_background_protection" />
-
-    </FrameLayout>
 
 
     <LinearLayout

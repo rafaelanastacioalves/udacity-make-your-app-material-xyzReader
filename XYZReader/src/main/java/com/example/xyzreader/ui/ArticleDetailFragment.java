@@ -128,7 +128,7 @@ public class ArticleDetailFragment extends Fragment implements
 //            }
 //        });
 
-//        mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
+        mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
 //        mPhotoContainerView = mRootView.findViewById(R.id.photo_container);
 
 //        mStatusBarColorDrawable = new ColorDrawable(0);
@@ -184,13 +184,7 @@ public class ArticleDetailFragment extends Fragment implements
         AppCompatActivity mActivity = (AppCompatActivity) getActivity();
 
 
-        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
-        if(null != toolbar){
-            mActivity.setSupportActionBar(toolbar);
-            mActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
-            mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        }
 
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,9 +222,17 @@ public class ArticleDetailFragment extends Fragment implements
                             if (bitmap != null) {
                                 Palette p = Palette.generate(bitmap, 12);
                                 mMutedColor = p.getDarkMutedColor(0xFF333333);
-//                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
+                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
                                 mRootView.findViewById(R.id.meta_bar)
                                         .setBackgroundColor(mMutedColor);
+                                Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
+                                if(null != toolbar){
+                                    AppCompatActivity mActivity = (AppCompatActivity) getActivity();
+                                    mActivity.setSupportActionBar(toolbar);
+                                    mActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+                                    mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+                                }
 //                                updateStatusBar();
                             }
                         }
@@ -245,6 +247,14 @@ public class ArticleDetailFragment extends Fragment implements
             titleView.setText("N/A");
             bylineView.setText("N/A" );
             bodyView.setText("N/A");
+        }
+
+        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
+        if(null != toolbar){
+            mActivity.setSupportActionBar(toolbar);
+            mActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+            mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         }
     }
 
