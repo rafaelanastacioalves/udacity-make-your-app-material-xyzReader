@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
@@ -140,9 +141,14 @@ public class ArticleListActivity extends ActionBarActivity implements
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(getApplicationContext(),ArticleDetailActivity.class);
-                    i.putExtra(ArticleDetailFragment.EXTRA_ARTICLE_ID, getItemId(vh.getAdapterPosition()));
-                    startActivity(i);
+                    if(!mIsRefreshing){
+                        Intent i = new Intent(getApplicationContext(),ArticleDetailActivity.class);
+                        i.putExtra(ArticleDetailFragment.EXTRA_ARTICLE_ID, getItemId(vh.getAdapterPosition()));
+                        startActivity(i);
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Wait a moment: refreshing.", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             });
             return vh;
