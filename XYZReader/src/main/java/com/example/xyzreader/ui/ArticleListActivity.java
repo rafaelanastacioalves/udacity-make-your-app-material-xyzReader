@@ -24,6 +24,9 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.UpdaterService;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * An activity representing a list of Articles. This activity has different presentations for
  * handset and tablet-size devices. On handsets, the activity presents a list of items, which when
@@ -33,9 +36,12 @@ import com.example.xyzreader.data.UpdaterService;
 public class ArticleListActivity extends ActionBarActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String LAST_SYNC_BUNDLE_KEY = "LAST_SYNC_BUNDLE_KEY";
     private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
+    private static long last_sync;
+    private long SYNC_THRESHOLD = 60 * 60 * 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +49,6 @@ public class ArticleListActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_article_list);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
 
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
@@ -57,13 +62,25 @@ public class ArticleListActivity extends ActionBarActivity implements
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         getLoaderManager().initLoader(0, null, this);
 
-        if (savedInstanceState == null) {
-            refresh();
+        if (savedInstanceState != null) {
+            Log.d(TAG, "Retrieving last_sync equal to " + last_sync);
+
+            last_sync = savedInstanceState.getLong(LAST_SYNC_BUNDLE_KEY);
         }
+
+        if ((Calendar.getInstance().getTimeInMillis() - last_sync) > SYNC_THRESHOLD){
+            Log.d(TAG, "Syncing because difference is " + (Calendar.getInstance().getTimeInMillis() - last_sync) + " is bigger than the SYNC_THRESHOLD " + SYNC_THRESHOLD);
+            refresh();
+
+
+        }
+
     }
 
     private void refresh() {
         startService(new Intent(this, UpdaterService.class));
+        Log.d(TAG, "Saving last_sync equal to " + Calendar.getInstance().getTimeInMillis());
+        last_sync = Calendar.getInstance().getTimeInMillis();
     }
 
     @Override
@@ -79,15 +96,16 @@ public class ArticleListActivity extends ActionBarActivity implements
         unregisterReceiver(mRefreshingReceiver);
     }
 
+
     private boolean mIsRefreshing = false;
 
-    private final String TAG = this.getClass().getSimpleName() ;
+    private final String TAG = this.getClass().getSimpleName();
     private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
                 mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
-                Log.d(TAG,"Calling updateRefreshUI" );
+                Log.d(TAG, "Calling updateRefreshUI");
 
                 updateRefreshingUI();
             }
@@ -95,7 +113,7 @@ public class ArticleListActivity extends ActionBarActivity implements
     };
 
     private void updateRefreshingUI() {
-        Log.d(TAG,"Setting refreshing to " + mIsRefreshing );
+        Log.d(TAG, "Setting refreshing to " + mIsRefreshing);
 
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
@@ -103,6 +121,12 @@ public class ArticleListActivity extends ActionBarActivity implements
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return ArticleLoader.newAllArticlesInstance(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putLong(LAST_SYNC_BUNDLE_KEY, last_sync);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -141,11 +165,11 @@ public class ArticleListActivity extends ActionBarActivity implements
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(!mIsRefreshing){
-                        Intent i = new Intent(getApplicationContext(),ArticleDetailActivity.class);
+                    if (!mIsRefreshing) {
+                        Intent i = new Intent(getApplicationContext(), ArticleDetailActivity.class);
                         i.putExtra(ArticleDetailFragment.EXTRA_ARTICLE_ID, getItemId(vh.getAdapterPosition()));
                         startActivity(i);
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), "Wait a moment: refreshing.", Toast.LENGTH_SHORT).show();
                     }
 
