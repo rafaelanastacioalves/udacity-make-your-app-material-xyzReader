@@ -9,7 +9,7 @@
     android:layout_gravity="top|center"
     android:maxWidth="@dimen/detail_card_max_width"
     android:elevation="@dimen/card_elevation"
-    android:background="#fff"
+    android:background="@color/reading_background"
     tools:showIn="@layout/fragment_article_detail">
 
 
@@ -19,7 +19,7 @@
         android:id="@+id/meta_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#333"
+        android:background="@color/title_background"
         android:layout_gravity="bottom"
         android:orientation="vertical"
         android:paddingLeft="@dimen/detail_inner_horiz_margin"
@@ -56,8 +56,9 @@
         android:layout_marginLeft="@dimen/detail_inner_horiz_margin"
         android:layout_marginRight="@dimen/detail_inner_horiz_margin"
         android:paddingBottom="@dimen/detail_body_bottom_margin"
-        android:textColor="@color/ltgray"
-        android:textColorLink="@color/theme_accent"
+        android:textColor="@color/reading_text"
+        android:textColorLink="@color/reading_text_link"
+        tools:text="Rafael,\n we are testing this."
         android:textSize="@dimen/detail_body_text_size"
         android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier" />
 
