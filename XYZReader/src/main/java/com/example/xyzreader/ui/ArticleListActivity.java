@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -45,6 +46,12 @@ public class ArticleListActivity extends ActionBarActivity implements
 
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         getLoaderManager().initLoader(0, null, this);
@@ -73,17 +80,22 @@ public class ArticleListActivity extends ActionBarActivity implements
 
     private boolean mIsRefreshing = false;
 
+    private final String TAG = this.getClass().getSimpleName() ;
     private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
                 mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
+                Log.d(TAG,"Calling updateRefreshUI" );
+
                 updateRefreshingUI();
             }
         }
     };
 
     private void updateRefreshingUI() {
+        Log.d(TAG,"Setting refreshing to " + mIsRefreshing );
+
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 

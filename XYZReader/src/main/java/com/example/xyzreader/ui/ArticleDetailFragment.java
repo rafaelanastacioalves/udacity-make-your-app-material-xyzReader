@@ -55,6 +55,7 @@ public class ArticleDetailFragment extends Fragment implements
     private int mScrollY;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
+    public static int LOADER_ID_ARTICLE_WITH_ID = 1;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -99,7 +100,7 @@ public class ArticleDetailFragment extends Fragment implements
         // the fragment's onCreate may cause the same LoaderManager to be dealt to multiple
         // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
         // we do this in onActivityCreated.
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(LOADER_ID_ARTICLE_WITH_ID, null, this);
     }
 
     @Override
@@ -258,25 +259,34 @@ public class ArticleDetailFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        if (!isAdded()) {
-            if (cursor != null) {
-                cursor.close();
+        if(cursorLoader.getId() == LOADER_ID_ARTICLE_WITH_ID){
+            if (!isAdded()) {
+                if (cursor != null) {
+                    Log.i(TAG,"Fragment not added yet \n + \ncursor =! null");
+                    cursor.close();
+                }
+                Log.i(TAG,"Fragment not added yet \n + \ncursor = null");
+                return;
             }
-            return;
+
+            mCursor = cursor;
+            if (mCursor != null && !mCursor.moveToFirst()) {
+                Log.e(TAG, "Error reading item detail cursor");
+                mCursor.close();
+                mCursor = null;
+                
+            }
+
+            bindViews();
         }
 
-        mCursor = cursor;
-        if (mCursor != null && !mCursor.moveToFirst()) {
-            Log.e(TAG, "Error reading item detail cursor");
-            mCursor.close();
-            mCursor = null;
-        }
-
-        bindViews();
     }
+
+
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        Log.d(TAG,"Resetting loader");
         mCursor = null;
         bindViews();
     }

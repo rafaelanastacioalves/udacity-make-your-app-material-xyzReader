@@ -1,20 +1,16 @@
 package com.example.xyzreader.ui;
 
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.example.xyzreader.R;
-import com.example.xyzreader.data.ArticleLoader;
 
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
  */
-public class ArticleDetailActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ArticleDetailActivity extends AppCompatActivity {
 
     private final String LOG_TAG = getClass().getSimpleName();
     private Cursor mCursor;
@@ -36,7 +32,6 @@ public class ArticleDetailActivity extends AppCompatActivity
 
 
 
-        getLoaderManager().initLoader(0, null, this);
 
 
 
@@ -100,76 +95,7 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return ArticleLoader.newAllArticlesInstance(this);
-    }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 
-        Log.d(LOG_TAG,"Cursor loaded.");
-        mCursor = cursor;
-
-//        mPagerAdapter.notifyDataSetChanged();
-
-//        // Select the start ID
-//        if (mStartId > 0) {
-//            mCursor.moveToFirst();
-//            // TODO: optimize
-//            while (!mCursor.isAfterLast()) {
-//                if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
-//                    final int position = mCursor.getPosition();
-//                    mPager.setCurrentItem(position, false);
-//                    break;
-//                }
-//                mCursor.moveToNext();
-//            }
-//            mStartId = 0;
-//        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        mCursor = null;
-    }
-
-//    public void onUpButtonFloorChanged(long itemId, ArticleDetailFragment fragment) {
-//        if (itemId == mSelectedItemId) {
-//            mSelectedItemUpButtonFloor = fragment.getUpButtonFloor();
-//            updateUpButtonPosition();
-//        }
-//    }
-
-//    private void updateUpButtonPosition() {
-//        int upButtonNormalBottom = mTopInset + mUpButton.getHeight();
-//        mUpButton.setTranslationY(Math.min(mSelectedItemUpButtonFloor - upButtonNormalBottom, 0));
-//    }
-
-//    private class MyPagerAdapter extends FragmentStatePagerAdapter {
-//        public MyPagerAdapter(FragmentManager fm) {
-//            super(fm);
-//        }
-//
-//        @Override
-//        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-//            super.setPrimaryItem(container, position, object);
-//            ArticleDetailFragment fragment = (ArticleDetailFragment) object;
-////            if (fragment != null) {
-////                mSelectedItemUpButtonFloor = fragment.getUpButtonFloor();
-////                updateUpButtonPosition();
-////            }
-//        }
-//
-//        @Override
-//        public Fragment getItem(int position) {
-//            mCursor.moveToPosition(position);
-//            return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));
-//        }
-
-//        @Override
-//        public int getCount() {
-//            return (mCursor != null) ? mCursor.getCount() : 0;
-//        }
 
 }
