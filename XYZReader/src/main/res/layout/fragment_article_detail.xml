@@ -3,20 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:elevation="@dimen/no_elevation"
     tools:context=".ui.ArticleDetailActivity"
     xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
+        android:elevation="@dimen/appbar_elevation"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/detail_photo_height"
+        android:layout_height="wrap_content"
+
         android:background="?colorPrimary">
 
         <android.support.design.widget.CollapsingToolbarLayout
-            android:elevation="@dimen/appbar_elevation"
             android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/detail_photo_height"
             app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
             app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
             app:expandedTitleMarginStart="72dp"
@@ -37,8 +39,6 @@
                 app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:layout_collapseMode="pin"
                 android:visibility="visible"
-                app:contentInsetStart="72dp"
-
                 >
             </android.support.v7.widget.Toolbar>
 
@@ -54,10 +54,12 @@
     <android.support.v4.widget.NestedScrollView
     android:id="@+id/scrollview"
     android:elevation="@dimen/card_elevation"
+        app:layout_anchorGravity="top|center"
+        app:layout_anchor="@id/app_bar_layout"
         app:behavior_overlapTop="@dimen/toolbar_height"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
         <include layout="@layout/reading_layout" />
