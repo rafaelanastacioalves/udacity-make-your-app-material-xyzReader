@@ -86,7 +86,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
                 mStartId = getIntent().getLongExtra(ArticleDetailFragment.EXTRA_ARTICLE_ID, 0);
                 mSelectedItemId = mStartId;
                 getFragmentManager().beginTransaction().add(R.id.article_fragment_container, ArticleDetailFragment.newInstance(mStartId)).commit();
-
+                supportPostponeEnterTransition();
 //            }
             }
 
