@@ -1,5 +1,8 @@
 package com.example.xyzreader.ui;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,7 +10,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +22,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -163,12 +169,18 @@ public class ArticleListActivity extends ActionBarActivity implements
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ViewHolder vh = new ViewHolder(view);
             view.setOnClickListener(new View.OnClickListener() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void onClick(View view) {
                     if (!mIsRefreshing) {
+
+                        ImageView transitionImageView = (ImageView) view.findViewById(R.id.thumbnail);
+                        Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(ArticleListActivity.this,
+                                transitionImageView, transitionImageView.getTransitionName()).toBundle();
+
                         Intent i = new Intent(getApplicationContext(), ArticleDetailActivity.class);
                         i.putExtra(ArticleDetailFragment.EXTRA_ARTICLE_ID, getItemId(vh.getAdapterPosition()));
-                        startActivity(i);
+                        startActivity(i,bundle);
                     } else {
                         Toast.makeText(getApplicationContext(), "Wait a moment: refreshing.", Toast.LENGTH_SHORT).show();
                     }
