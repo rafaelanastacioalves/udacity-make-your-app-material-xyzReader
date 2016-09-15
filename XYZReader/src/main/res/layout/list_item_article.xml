@@ -21,6 +21,7 @@
             android:id="@+id/thumbnail"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:transitionName="@string/article_imageview_transition_name"
             android:background="@color/photo_placeholder" />
 
         <TextView
