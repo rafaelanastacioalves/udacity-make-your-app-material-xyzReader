@@ -27,6 +27,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+import com.jakewharton.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
+
+import java.util.Collections;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -176,6 +183,20 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                .build();
+
+        Picasso picasso = new Picasso.Builder(getActivity())
+                .downloader(new OkHttp3Downloader(client))
+                .build();
+
+        AppCompatActivity mActivity = (AppCompatActivity) getActivity();
+        picasso.with(mActivity)
+                .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
+                .placeholder(getResources().getDrawable(R.drawable.empty_detail))
+                .into(mPhotoView);
+
         TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
@@ -183,7 +204,7 @@ public class ArticleDetailFragment extends Fragment implements
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
         bodyView.setTextColor(getResources().getColor(R.color.reading_text));
 
-        AppCompatActivity mActivity = (AppCompatActivity) getActivity();
+
 
 
 
@@ -213,29 +234,33 @@ public class ArticleDetailFragment extends Fragment implements
                             + " by <font color='#ffffff'>"
                             + mCursor.getString(ArticleLoader.Query.AUTHOR)
                             + "</font>"));
+
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
-            ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
-                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
-                        @Override
-                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                            Bitmap bitmap = imageContainer.getBitmap();
-                            if (bitmap != null) {
-                                Palette p = Palette.generate(bitmap, 12);
-//                                mMutedColor = p.getDarkMutedColor(0xFF333333);
-                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
-                                ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
-//                                mRootView.findViewById(R.id.meta_bar)
-//                                        .setBackgroundColor(mMutedColor);
 
-//                                updateStatusBar();
-                            }
-                        }
 
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
 
-                        }
-                    });
+//            ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
+//                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
+//                        @Override
+//                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+//                            Bitmap bitmap = imageContainer.getBitmap();
+//                            if (bitmap != null) {
+//                                Palette p = Palette.generate(bitmap, 12);
+////                                mMutedColor = p.getDarkMutedColor(0xFF333333);
+//                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
+//                                ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
+////                                mRootView.findViewById(R.id.meta_bar)
+////                                        .setBackgroundColor(mMutedColor);
+//
+////                                updateStatusBar();
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onErrorResponse(VolleyError volleyError) {
+//
+//                        }
+//                    });
         } else {
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
@@ -250,6 +275,7 @@ public class ArticleDetailFragment extends Fragment implements
             mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         }
+        ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
     }
 
     @Override
