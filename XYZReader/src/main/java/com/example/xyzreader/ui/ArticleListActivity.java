@@ -51,6 +51,7 @@ public class ArticleListActivity extends ActionBarActivity implements
     private RecyclerView mRecyclerView;
     private static long last_sync;
     private long SYNC_THRESHOLD = 60 * 60 * 1000;
+    private long mDetailActivityCachedUrlID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +148,9 @@ public class ArticleListActivity extends ActionBarActivity implements
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+        if((id == ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID) && (mDetailActivityCachedUrlID == null)){
+            return ArticleLoader.newInstanceForItemId(this, mItemId);        }
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
@@ -195,6 +198,8 @@ public class ArticleListActivity extends ActionBarActivity implements
                 @Override
                 public void onClick(View view) {
                     if (!mIsRefreshing) {
+                        mDetailActivityCachedUrlID = getItemId(vh.getAdapterPosition());
+                        getLoaderManager().initLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID, null, ArticleListActivity.this);
 
                         ImageView transitionImageView = (ImageView) view.findViewById(R.id.thumbnail);
                         Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(ArticleListActivity.this,

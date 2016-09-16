@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -200,40 +202,52 @@ public class ArticleDetailFragment extends Fragment implements
 
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
 
+            mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
+                            .setType("text/plain")
+                            .setText("Some sample text")
+                            .getIntent(), getString(R.string.action_share)));
+                }
+            });
 
 
+
+
+
+
+
+            Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
+            if(null != toolbar){
+                mActivity.setSupportActionBar(toolbar);
+                mActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+                mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+            Log.d(TAG,"Trying to load image from " + mCursor.getString(ArticleLoader.Query.PHOTO_URL));
 
             Picasso.with(mActivity)
                     .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
-                    .into(mPhotoView);
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .into(mPhotoView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
+                        }
 
-            ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
+                        @Override
+                        public void onError() {
+
+                        }
+
+
+                    });
 
 
 
 
-//            ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
-//                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
-//                        @Override
-//                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-//                            Bitmap bitmap = imageContainer.getBitmap();
-//                            if (bitmap != null) {
-//                                Palette p = Palette.generate(bitmap, 12);
-////                                mMutedColor = p.getDarkMutedColor(0xFF333333);
-//                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
-//                                ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
-////                                mRootView.findViewById(R.id.meta_bar)
-////                                        .setBackgroundColor(mMutedColor);
-//
-////                                updateStatusBar();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onErrorResponse(VolleyError volleyError) {
-//
-//                        }
-//                    });
+
         } else {
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
@@ -246,27 +260,8 @@ public class ArticleDetailFragment extends Fragment implements
 
 
 
-        mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
-                        .setType("text/plain")
-                        .setText("Some sample text")
-                        .getIntent(), getString(R.string.action_share)));
-            }
-        });
 
 
-
-
-
-
-
-        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
-        if(null != toolbar){
-            mActivity.setSupportActionBar(toolbar);
-            mActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
-            mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         }
     }
@@ -274,6 +269,13 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return ArticleLoader.newInstanceForItemId(getActivity(), mItemId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Picasso.with(getActivity()).cancelRequest(mPhotoView);
+
     }
 
     @Override
