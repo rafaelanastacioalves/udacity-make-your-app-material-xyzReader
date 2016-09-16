@@ -1,8 +1,6 @@
 package com.example.xyzreader.ui;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,13 +28,10 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.UpdaterService;
 import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
@@ -87,6 +82,25 @@ public class ArticleListActivity extends ActionBarActivity implements
             refresh();
 
 
+        }
+
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                .build();
+
+        Picasso picasso = new Picasso.Builder(getApplicationContext())
+                .downloader(new OkHttp3Downloader(client))
+                .build();
+
+        // set the global instance to use this Picasso object
+        // all following Picasso (with Picasso.with(Context context) requests will use this Picasso object
+        // you can only use the setSingletonInstance() method once!
+        try {
+            Picasso.setSingletonInstance(picasso);
+        } catch (IllegalStateException ignored) {
+            Log.e(TAG,ignored.getStackTrace().toString());
+            // Picasso instance was already set
+            // cannot set it after Picasso.with(Context) was already in use
         }
 
     }
@@ -210,16 +224,9 @@ public class ArticleListActivity extends ActionBarActivity implements
                             + " by "
                             + mCursor.getString(ArticleLoader.Query.AUTHOR));
 
-            final OkHttpClient client = new OkHttpClient.Builder()
-                    .protocols(Collections.singletonList(Protocol.HTTP_1_1))
-                    .build();
-
-            Picasso picasso = new Picasso.Builder(getApplicationContext())
-                    .downloader(new OkHttp3Downloader(client))
-                    .build();
 
 
-            picasso.with(getApplicationContext())
+            Picasso.with(getApplicationContext())
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
                     .placeholder(getDrawable(R.drawable.empty_detail))
                     .transform(new OnDemandAspectRatioTransformation(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO)))

@@ -5,13 +5,11 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -23,17 +21,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
-import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
-
-import java.util.Collections;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -183,19 +173,9 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        final OkHttpClient client = new OkHttpClient.Builder()
-                .protocols(Collections.singletonList(Protocol.HTTP_1_1))
-                .build();
 
-        Picasso picasso = new Picasso.Builder(getActivity())
-                .downloader(new OkHttp3Downloader(client))
-                .build();
 
-        AppCompatActivity mActivity = (AppCompatActivity) getActivity();
-        picasso.with(mActivity)
-                .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
-                .placeholder(getResources().getDrawable(R.drawable.empty_detail))
-                .into(mPhotoView);
+
 
         TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
@@ -203,24 +183,7 @@ public class ArticleDetailFragment extends Fragment implements
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
         bodyView.setTextColor(getResources().getColor(R.color.reading_text));
-
-
-
-
-
-
-        mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
-                        .setType("text/plain")
-                        .setText("Some sample text")
-                        .getIntent(), getString(R.string.action_share)));
-            }
-        });
-
-
-
+        AppCompatActivity mActivity = (AppCompatActivity) getActivity();
 
 
         if (mCursor != null) {
@@ -236,6 +199,16 @@ public class ArticleDetailFragment extends Fragment implements
                             + "</font>"));
 
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
+
+
+
+
+            Picasso.with(mActivity)
+                    .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
+                    .into(mPhotoView);
+
+            ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
+
 
 
 
@@ -268,6 +241,27 @@ public class ArticleDetailFragment extends Fragment implements
             bodyView.setText("N/A");
         }
 
+
+
+
+
+
+        mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
+                        .setType("text/plain")
+                        .setText("Some sample text")
+                        .getIntent(), getString(R.string.action_share)));
+            }
+        });
+
+
+
+
+
+
+
         Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         if(null != toolbar){
             mActivity.setSupportActionBar(toolbar);
@@ -275,7 +269,6 @@ public class ArticleDetailFragment extends Fragment implements
             mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         }
-        ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
     }
 
     @Override
