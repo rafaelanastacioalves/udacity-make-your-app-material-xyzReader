@@ -5,5 +5,8 @@
     <dimen name="detail_photo_height">300dp</dimen>
     <dimen name="detail_card_top_margin">256dp</dimen>
     <dimen name="detail_card_max_width">650dp</dimen> <!-- force match_parent -->
+    <dimen name="overlap_top_reagin_layout">@dimen/toolbar_height</dimen>
+    <dimen name="card_elevation">6dp</dimen>
+
 
 </resources>
