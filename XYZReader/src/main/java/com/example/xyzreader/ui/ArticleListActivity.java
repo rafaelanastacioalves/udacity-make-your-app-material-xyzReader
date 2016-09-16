@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.UpdaterService;
 import com.jakewharton.picasso.OkHttp3Downloader;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -51,7 +53,7 @@ public class ArticleListActivity extends ActionBarActivity implements
     private RecyclerView mRecyclerView;
     private static long last_sync;
     private long SYNC_THRESHOLD = 60 * 60 * 1000;
-    private long mDetailActivityCachedUrlID;
+    private Long mDetailActivityCachedUrlID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,7 @@ public class ArticleListActivity extends ActionBarActivity implements
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID, null, this);
 
         if (savedInstanceState != null) {
             Log.d(TAG, "Retrieving last_sync equal to " + last_sync);
@@ -149,8 +152,12 @@ public class ArticleListActivity extends ActionBarActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
-        if((id == ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID) && (mDetailActivityCachedUrlID == null)){
-            return ArticleLoader.newInstanceForItemId(this, mItemId);        }
+        if((id == ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID) && (mDetailActivityCachedUrlID != null)){
+            Log.d(TAG,"Creating loader for detail activity");
+            return ArticleLoader.newInstanceForItemId(this, mDetailActivityCachedUrlID);
+        }
+        Log.d(TAG,"Creating loader for main activity");
+
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
@@ -162,13 +169,26 @@ public class ArticleListActivity extends ActionBarActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Adapter adapter = new Adapter(cursor);
-        adapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(adapter);
-        int columnCount = getResources().getInteger(R.integer.list_column_count);
-        StaggeredGridLayoutManager sglm =
-                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(sglm);
+
+        if(cursorLoader.getId() == 0){
+            Adapter adapter = new Adapter(cursor);
+            adapter.setHasStableIds(true);
+            mRecyclerView.setAdapter(adapter);
+            int columnCount = getResources().getInteger(R.integer.list_column_count);
+            StaggeredGridLayoutManager sglm =
+                    new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(sglm);
+        }
+
+        if(cursorLoader.getId() == ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID){
+            if(cursor !=null && cursor.moveToFirst()){
+
+                Picasso.with(this)
+                        .load(cursor.getString(ArticleLoader.Query.PHOTO_URL))
+                        .fetch();
+            }
+        }
+
     }
 
     @Override
@@ -199,7 +219,8 @@ public class ArticleListActivity extends ActionBarActivity implements
                 public void onClick(View view) {
                     if (!mIsRefreshing) {
                         mDetailActivityCachedUrlID = getItemId(vh.getAdapterPosition());
-                        getLoaderManager().initLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID, null, ArticleListActivity.this);
+                        getLoaderManager().restartLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID, null, ArticleListActivity.this);
+
 
                         ImageView transitionImageView = (ImageView) view.findViewById(R.id.thumbnail);
                         Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(ArticleListActivity.this,

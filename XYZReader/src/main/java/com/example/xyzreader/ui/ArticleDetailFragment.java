@@ -179,6 +179,7 @@ public class ArticleDetailFragment extends Fragment implements
 
 
 
+
         TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
@@ -229,7 +230,6 @@ public class ArticleDetailFragment extends Fragment implements
 
             Picasso.with(mActivity)
                     .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
-                    .networkPolicy(NetworkPolicy.OFFLINE)
                     .into(mPhotoView, new Callback() {
                         @Override
                         public void onSuccess() {
@@ -281,6 +281,12 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         if(cursorLoader.getId() == LOADER_ID_ARTICLE_WITH_ID){
+            if(cursor.moveToFirst()){
+                Picasso.with(getActivity())
+                        .load(cursor.getString(ArticleLoader.Query.PHOTO_URL))
+                        .fetch();
+            }
+
             if (!isAdded()) {
                 if (cursor != null) {
                     Log.i(TAG,"Fragment not added yet \n + \ncursor =! null");
