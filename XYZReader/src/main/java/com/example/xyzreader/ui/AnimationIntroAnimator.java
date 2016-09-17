@@ -20,13 +20,13 @@ public class AnimationIntroAnimator extends DefaultItemAnimator {
     @Override
     public boolean animateAdd(RecyclerView.ViewHolder holder) {
 
-        if(holder.getLayoutPosition() > lastAddAnimatedItem ) {
-            lastAddAnimatedItem++;
+//        if(holder.getLayoutPosition() > lastAddAnimatedItem ) {
+//            lastAddAnimatedItem++;
             runEnterAnimation((ArticleListActivity.ArticleItemViewHolder) holder);
             return false;
-        }
-        dispatchAddFinished(holder);
-        return false;
+//        }
+//        dispatchAddFinished(holder);
+//        return false;
     }
 
     private void runEnterAnimation(ArticleListActivity.ArticleItemViewHolder holder) {

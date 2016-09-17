@@ -70,6 +70,7 @@ public class ArticleListActivity extends ActionBarActivity implements
         });
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        animateIntro();
         getLoaderManager().initLoader(0, null, this);
         getLoaderManager().initLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID, null, this);
 
@@ -171,15 +172,19 @@ public class ArticleListActivity extends ActionBarActivity implements
         if(cursorLoader.getId() == 0){
             Adapter adapter = new Adapter(cursor);
             adapter.setHasStableIds(true);
-            mRecyclerView.setAdapter(adapter);
             int columnCount = getResources().getInteger(R.integer.list_column_count);
             StaggeredGridLayoutManager sglm =
                     new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(sglm);
 
+            mRecyclerView.setAdapter(adapter);
 
-            animateIntro();
-            adapter.notifyItemRangeInserted(0, cursor.getCount());
+
+            if(cursor.moveToFirst()){
+                Log.i(TAG, "Notifying item range inserted");
+                adapter.notifyDataSetChanged();
+
+            }
 
 
         }
@@ -280,6 +285,7 @@ public class ArticleListActivity extends ActionBarActivity implements
     }
 
     private void animateIntro(){
+        Log.i(TAG, "Setting animator...");
         mRecyclerView.setItemAnimator(new AnimationIntroAnimator());
     }
 
