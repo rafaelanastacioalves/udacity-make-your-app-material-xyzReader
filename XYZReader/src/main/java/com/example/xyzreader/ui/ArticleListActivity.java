@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +28,6 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.UpdaterService;
 import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -178,6 +176,12 @@ public class ArticleListActivity extends ActionBarActivity implements
             StaggeredGridLayoutManager sglm =
                     new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(sglm);
+
+
+            animateIntro();
+            adapter.notifyItemRangeInserted(0, cursor.getCount());
+
+
         }
 
         if(cursorLoader.getId() == ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID){
@@ -196,7 +200,7 @@ public class ArticleListActivity extends ActionBarActivity implements
         mRecyclerView.setAdapter(null);
     }
 
-    private class Adapter extends RecyclerView.Adapter<ViewHolder> {
+    private class Adapter extends RecyclerView.Adapter<ArticleItemViewHolder> {
         private Cursor mCursor;
 
         public Adapter(Cursor cursor) {
@@ -210,9 +214,9 @@ public class ArticleListActivity extends ActionBarActivity implements
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ArticleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
-            final ViewHolder vh = new ViewHolder(view);
+            final ArticleItemViewHolder vh = new ArticleItemViewHolder(view);
             view.setOnClickListener(new View.OnClickListener() {
                 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 @Override
@@ -239,7 +243,12 @@ public class ArticleListActivity extends ActionBarActivity implements
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+        }
+
+        @Override
+        public void onBindViewHolder(ArticleItemViewHolder holder, int position) {
             mCursor.moveToPosition(position);
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
             holder.subtitleView.setText(
@@ -270,12 +279,16 @@ public class ArticleListActivity extends ActionBarActivity implements
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    private void animateIntro(){
+        mRecyclerView.setItemAnimator(new AnimationIntroAnimator());
+    }
+
+    public static class ArticleItemViewHolder extends RecyclerView.ViewHolder {
         public ImageView thumbnailView;
         public TextView titleView;
         public TextView subtitleView;
 
-        public ViewHolder(View view) {
+        public ArticleItemViewHolder(View view) {
             super(view);
             thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
             titleView = (TextView) view.findViewById(R.id.article_title);

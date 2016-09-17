@@ -11,5 +11,6 @@
     <dimen name="no_elevation">0dp</dimen>
     <dimen name="toolbar_height">56dp</dimen>
     <dimen name="status_bar_height">24dp</dimen>
+    <dimen name="offset_y">299dp</dimen>
 
 </resources>
