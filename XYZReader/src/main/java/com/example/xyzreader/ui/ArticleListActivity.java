@@ -109,6 +109,7 @@ public class ArticleListActivity extends ActionBarActivity implements
     }
 
     private void refresh() {
+        mRecyclerView.setAdapter(null);
         startService(new Intent(this, UpdaterService.class));
         Log.d(TAG, "Saving last_sync equal to " + Calendar.getInstance().getTimeInMillis());
         last_sync = Calendar.getInstance().getTimeInMillis();
