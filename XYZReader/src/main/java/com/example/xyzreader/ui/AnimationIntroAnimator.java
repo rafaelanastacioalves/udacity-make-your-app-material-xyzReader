@@ -12,6 +12,7 @@ import com.example.xyzreader.R;
 
 /**
  * Created by rafaelanastacioalves on 9/17/16.
+ * Adapted from http://frogermcs.github.io/instamaterial-recyclerview-animations-done-right/#disqus_thread
  */
 public class AnimationIntroAnimator extends DefaultItemAnimator {
     private final String TAG = getClass().getSimpleName();
