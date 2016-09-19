@@ -19,8 +19,9 @@
         <!--suppress AndroidLintContentDescription -->
         <ImageView
             android:id="@+id/thumbnail"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|top"
             android:transitionName="@string/article_imageview_transition_name"
             android:background="@color/photo_placeholder" />
 
