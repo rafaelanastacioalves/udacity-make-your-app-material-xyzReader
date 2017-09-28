@@ -37,6 +37,8 @@ import java.util.Collections;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 
+import static android.view.View.VISIBLE;
+
 /**
  * An activity representing a list of Articles. This activity has different presentations for
  * handset and tablet-size devices. On handsets, the activity presents a list of items, which when
@@ -147,7 +149,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     private void updateRefreshingUI() {
         Log.d(TAG, "Setting refreshing to " + mIsRefreshing);
-
+        mSwipeRefreshLayout.setVisibility(mIsRefreshing ? View.INVISIBLE : VISIBLE);
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
@@ -204,6 +206,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.i("Loader", "onLoaderReset");
         mRecyclerView.setAdapter(null);
     }
 
@@ -271,7 +274,8 @@ public class ArticleListActivity extends AppCompatActivity implements
             Picasso.with(getApplicationContext())
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
                     .placeholder(getDrawable(R.drawable.empty_detail))
-                    .transform(new OnDemandAspectRatioTransformation(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO)))
+                    .resize(500,500)
+                    .centerInside()
                     .into(holder.thumbnailView);
             Log.d(TAG,"Trying to get data from " + mCursor.getString(ArticleLoader.Query.THUMB_URL));
         }
