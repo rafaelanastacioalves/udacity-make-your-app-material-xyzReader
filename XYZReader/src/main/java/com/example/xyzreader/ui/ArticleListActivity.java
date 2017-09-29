@@ -37,6 +37,7 @@ import java.util.Collections;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 
+import static android.R.attr.columnCount;
 import static android.view.View.VISIBLE;
 
 /**
@@ -55,6 +56,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     private static long last_sync;
     private long SYNC_THRESHOLD = 60 * 60 * 1000;
     private Long mDetailActivityCachedUrlID;
+    private Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         });
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        setupRecyclerView();
         animateIntro();
         getLoaderManager().initLoader(0, null, this);
         getLoaderManager().initLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID, null, this);
@@ -112,7 +115,6 @@ public class ArticleListActivity extends AppCompatActivity implements
     }
 
     private void refresh() {
-        mRecyclerView.setAdapter(null);
         startService(new Intent(this, UpdaterService.class));
         Log.d(TAG, "Saving last_sync equal to " + Calendar.getInstance().getTimeInMillis());
         last_sync = Calendar.getInstance().getTimeInMillis();
@@ -170,22 +172,31 @@ public class ArticleListActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
     }
 
+    public void setupRecyclerView(){
+        adapter = new Adapter();
+        adapter.setHasStableIds(true);
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+        StaggeredGridLayoutManager sglm =
+                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(sglm);
+
+
+
+    }
+
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 
         if(cursorLoader.getId() == 0){
-            Adapter adapter = new Adapter(cursor);
-            adapter.setHasStableIds(true);
-            int columnCount = getResources().getInteger(R.integer.list_column_count);
-            StaggeredGridLayoutManager sglm =
-                    new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(sglm);
 
-            mRecyclerView.setAdapter(adapter);
+
+
 
 
             if(cursor.moveToFirst()){
                 Log.i(TAG, "Notifying item range inserted");
+                adapter.swapCursor(cursor);
                 adapter.notifyDataSetChanged();
 
             }
@@ -207,7 +218,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.i("Loader", "onLoaderReset");
-        mRecyclerView.setAdapter(null);
+        adapter.swapCursor(null);
     }
 
     private class Adapter extends RecyclerView.Adapter<ArticleItemViewHolder> {
@@ -215,6 +226,10 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         public Adapter(Cursor cursor) {
             mCursor = cursor;
+        }
+
+        public Adapter() {
+            mCursor = null;
         }
 
         @Override
@@ -283,6 +298,10 @@ public class ArticleListActivity extends AppCompatActivity implements
         @Override
         public int getItemCount() {
             return mCursor.getCount();
+        }
+
+        public void swapCursor(Cursor cursor) {
+            this.mCursor = cursor;
         }
     }
 
