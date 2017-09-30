@@ -50,6 +50,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LAST_SYNC_BUNDLE_KEY = "LAST_SYNC_BUNDLE_KEY";
+    public static final int BASIC_LOADER_ID = 0;
     private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -77,7 +78,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         setupRecyclerView();
         animateIntro();
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(BASIC_LOADER_ID, null, this);
         getLoaderManager().initLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID, null, this);
 
         if (savedInstanceState != null) {
@@ -115,6 +116,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     }
 
     private void refresh() {
+
         startService(new Intent(this, UpdaterService.class));
         Log.d(TAG, "Saving last_sync equal to " + Calendar.getInstance().getTimeInMillis());
         last_sync = Calendar.getInstance().getTimeInMillis();
@@ -141,6 +143,8 @@ public class ArticleListActivity extends AppCompatActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
+                adapter.swapCursor(null);
+                adapter.notifyDataSetChanged();
                 mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
                 Log.d(TAG, "Calling updateRefreshUI");
 
@@ -151,7 +155,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     private void updateRefreshingUI() {
         Log.d(TAG, "Setting refreshing to " + mIsRefreshing);
-        mSwipeRefreshLayout.setVisibility(mIsRefreshing ? View.INVISIBLE : VISIBLE);
+        mRecyclerView.setVisibility(mIsRefreshing ? View.INVISIBLE : VISIBLE);
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
@@ -160,10 +164,13 @@ public class ArticleListActivity extends AppCompatActivity implements
         if((id == ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID) && (mDetailActivityCachedUrlID != null)){
             Log.d(TAG,"Creating loader for detail activity");
             return ArticleLoader.newInstanceForItemId(this, mDetailActivityCachedUrlID);
-        }
-        Log.d(TAG,"Creating loader for main activity");
+        }else if (id == BASIC_LOADER_ID){
+            Log.d(TAG,"Creating loader for main activity");
+            return ArticleLoader.newAllArticlesInstance(this);
 
-        return ArticleLoader.newAllArticlesInstance(this);
+        }
+        return null;
+
     }
 
     @Override
@@ -185,21 +192,26 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     }
 
+
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 
-        if(cursorLoader.getId() == 0){
+        if(cursorLoader.getId() == BASIC_LOADER_ID){
 
 
+            if (cursor != null){
+                if(cursor.moveToFirst()){
+                    Log.i(TAG, "Notifying item range inserted");
+                    adapter.swapCursor(cursor);
+                    adapter.notifyDataSetChanged();
+                }
 
-
-
-            if(cursor.moveToFirst()){
-                Log.i(TAG, "Notifying item range inserted");
-                adapter.swapCursor(cursor);
+            }else{
+                adapter.swapCursor(null);
                 adapter.notifyDataSetChanged();
-
             }
+
+
 
 
         }
@@ -219,6 +231,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.i("Loader", "onLoaderReset");
         adapter.swapCursor(null);
+        adapter.notifyDataSetChanged();
     }
 
     private class Adapter extends RecyclerView.Adapter<ArticleItemViewHolder> {
@@ -240,6 +253,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         @Override
         public ArticleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Log.i("adapter", "onCreateViewHolder");
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ArticleItemViewHolder vh = new ArticleItemViewHolder(view);
             view.setOnClickListener(new View.OnClickListener() {
@@ -274,6 +288,8 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         @Override
         public void onBindViewHolder(ArticleItemViewHolder holder, int position) {
+            Log.i("adapter", "onBindViewHolder for position " + position);
+
             mCursor.moveToPosition(position);
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
             holder.subtitleView.setText(
@@ -297,7 +313,11 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         @Override
         public int getItemCount() {
-            return mCursor.getCount();
+            if (mCursor != null){
+                return mCursor.getCount();
+            }else {
+                return 0;
+            }
         }
 
         public void swapCursor(Cursor cursor) {

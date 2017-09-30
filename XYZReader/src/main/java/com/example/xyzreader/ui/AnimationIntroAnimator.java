@@ -30,6 +30,13 @@ public class AnimationIntroAnimator extends DefaultItemAnimator {
 //        return false;
     }
 
+    @Override
+    public boolean animateRemove(RecyclerView.ViewHolder holder) {
+        View view = holder.itemView;
+        view.setVisibility(View.INVISIBLE);
+        return super.animateRemove(holder);
+    }
+
     private void runEnterAnimation(ArticleListActivity.ArticleItemViewHolder holder) {
 //        int count = mRecyclerView.getChildCount();
 //        Log.i(TAG,"Animation: counting " + count + " elements");

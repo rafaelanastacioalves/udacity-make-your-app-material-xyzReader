@@ -35,6 +35,7 @@ public class UpdaterService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Time time = new Time();
+        Log.i("UpdaterService", "onHandleIntent");
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
@@ -55,6 +56,9 @@ public class UpdaterService extends IntentService {
         cpo.add(ContentProviderOperation.newDelete(dirUri).build());
 
         try {
+            getContentResolver().applyBatch(ItemsContract.CONTENT_AUTHORITY, cpo);
+            cpo.clear();
+
             JSONArray array = RemoteEndpointUtil.fetchJsonArray();
             if (array == null) {
                 throw new JSONException("Invalid parsed item array" );
