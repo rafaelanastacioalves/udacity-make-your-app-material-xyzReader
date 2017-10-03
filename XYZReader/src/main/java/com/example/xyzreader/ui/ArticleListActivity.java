@@ -155,7 +155,6 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     private void updateRefreshingUI() {
         Log.d(TAG, "Setting refreshing to " + mIsRefreshing);
-        mRecyclerView.setVisibility(mIsRefreshing ? View.INVISIBLE : VISIBLE);
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
