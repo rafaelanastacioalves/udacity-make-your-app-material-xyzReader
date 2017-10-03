@@ -23,8 +23,8 @@ public class AnimationIntroAnimator extends DefaultItemAnimator {
 
 //        if(holder.getLayoutPosition() > lastAddAnimatedItem ) {
 //            lastAddAnimatedItem++;
-            runEnterAnimation((ArticleListActivity.ArticleItemViewHolder) holder);
-            return false;
+        runEnterAnimation((ArticleListActivity.ArticleItemViewHolder) holder);
+        return false;
 //        }
 //        dispatchAddFinished(holder);
 //        return false;
@@ -33,7 +33,8 @@ public class AnimationIntroAnimator extends DefaultItemAnimator {
     @Override
     public boolean animateRemove(RecyclerView.ViewHolder holder) {
         View view = holder.itemView;
-        view.setVisibility(View.INVISIBLE);
+//        view.setVisibility(View.INVISIBLE);
+        runExitAnimation((ArticleListActivity.ArticleItemViewHolder) holder);
         return super.animateRemove(holder);
     }
 
@@ -41,35 +42,64 @@ public class AnimationIntroAnimator extends DefaultItemAnimator {
 //        int count = mRecyclerView.getChildCount();
 //        Log.i(TAG,"Animation: counting " + count + " elements");
         Context context = holder.itemView.getContext();
-        float offset =  context.getResources().getDimensionPixelSize(R.dimen.offset_y);
+        float offset = context.getResources().getDimensionPixelSize(R.dimen.offset_y);
         Interpolator interpolator =
                 AnimationUtils.loadInterpolator(holder.itemView.getContext(), android.R.interpolator.linear_out_slow_in);
 //
 //        // loop over the children setting an increasing translation y but the same animation
 //        // duration + interpolation
         int count = holder.getLayoutPosition();
-        Log.i(TAG,"Animation: animating item of position" + count);
+        Log.i(TAG, "Animation: animating item of position" + count);
 
-        for(int i = 0; i<=count ; i++){
-                offset *= 1.5f;
-            }
-            View view = holder.itemView;
-            view.setVisibility(View.VISIBLE);
-            view.setTranslationY(offset);
-            view.setAlpha(0.85f);
-            // then animate back to natural position
-            view.animate()
-                    .translationY(0f)
-                    .alpha(1f)
-                    .setInterpolator(interpolator)
-                    .setDuration(1000L)
-                    .start();
-
-            // increase the offset distance for the next view
+        for (int i = 0; i <= count; i++) {
             offset *= 1.5f;
+        }
+        View view = holder.itemView;
+        view.setVisibility(View.VISIBLE);
+        view.setTranslationY(offset);
+        view.setAlpha(0.85f);
+        // then animate back to natural position
+        view.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setInterpolator(interpolator)
+                .setDuration(1000L)
+                .start();
 
-
-
-
+        // increase the offset distance for the next view
+        offset *= 1.5f;
     }
+
+    private void runExitAnimation(ArticleListActivity.ArticleItemViewHolder holder) {
+        //        int count = mRecyclerView.getChildCount();
+//        Log.i(TAG,"Animation: counting " + count + " elements");
+        Context context = holder.itemView.getContext();
+        float offset = context.getResources().getDimensionPixelSize(R.dimen.offset_y);
+        Interpolator interpolator =
+                AnimationUtils.loadInterpolator(holder.itemView.getContext(), android.R.interpolator.linear_out_slow_in);
+//
+//        // loop over the children setting an increasing translation y but the same animation
+//        // duration + interpolation
+        int count = holder.getLayoutPosition();
+        Log.i(TAG, "Animation: animating removing item of position" + count);
+
+        for (int i = 0; i <= count; i++) {
+            offset *= -1.5f;
+        }
+        View view = holder.itemView;
+        view.setVisibility(View.VISIBLE);
+        view.setTranslationY(offset);
+        view.setAlpha(0.85f);
+        // then animate back to natural position
+        view.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setInterpolator(interpolator)
+                .setDuration(1000L)
+                .start();
+
+        // increase the offset distance for the next view
+        offset *= -1.5f;
+    }
+
 }
