@@ -84,22 +84,22 @@ public class AnimationIntroAnimator extends DefaultItemAnimator {
         Log.i(TAG, "Animation: animating removing item of position" + count);
 
         for (int i = 0; i <= count; i++) {
-            offset *= -1.5f;
+            offset *= 1.5f;
         }
         View view = holder.itemView;
         view.setVisibility(View.VISIBLE);
-        view.setTranslationY(offset);
+        view.setTranslationY(0f);
         view.setAlpha(0.85f);
         // then animate back to natural position
         view.animate()
-                .translationY(0f)
+                .translationY(-1*offset)
                 .alpha(1f)
                 .setInterpolator(interpolator)
                 .setDuration(1000L)
                 .start();
 
         // increase the offset distance for the next view
-        offset *= -1.5f;
+        offset *= 1.5f;
     }
 
 }
