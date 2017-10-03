@@ -35,7 +35,7 @@ public class AnimationIntroAnimator extends DefaultItemAnimator {
         View view = holder.itemView;
 //        view.setVisibility(View.INVISIBLE);
         runExitAnimation((ArticleListActivity.ArticleItemViewHolder) holder);
-        return super.animateRemove(holder);
+        return false;
     }
 
     private void runEnterAnimation(ArticleListActivity.ArticleItemViewHolder holder) {
@@ -57,7 +57,7 @@ public class AnimationIntroAnimator extends DefaultItemAnimator {
         View view = holder.itemView;
         view.setVisibility(View.VISIBLE);
         view.setTranslationY(offset);
-        view.setAlpha(0.85f);
+        view.setAlpha(0.1f);
         // then animate back to natural position
         view.animate()
                 .translationY(0f)
@@ -66,8 +66,6 @@ public class AnimationIntroAnimator extends DefaultItemAnimator {
                 .setDuration(1000L)
                 .start();
 
-        // increase the offset distance for the next view
-        offset *= 1.5f;
     }
 
     private void runExitAnimation(ArticleListActivity.ArticleItemViewHolder holder) {
@@ -81,25 +79,44 @@ public class AnimationIntroAnimator extends DefaultItemAnimator {
 //        // loop over the children setting an increasing translation y but the same animation
 //        // duration + interpolation
         int count = holder.getLayoutPosition();
-        Log.i(TAG, "Animation: animating removing item of position" + count);
+        Log.i(TAG, "Animation: animating removing item of position " + count);
 
         for (int i = 0; i <= count; i++) {
             offset *= 1.5f;
         }
+
         View view = holder.itemView;
-        view.setVisibility(View.VISIBLE);
-        view.setTranslationY(0f);
-        view.setAlpha(0.85f);
+        view.setAlpha(1f);
         // then animate back to natural position
         view.animate()
-                .translationY(-1*offset)
-                .alpha(1f)
+                .translationY(offset)
+                .alpha(0f)
                 .setInterpolator(interpolator)
                 .setDuration(1000L)
+//                .setListener(new Animator.AnimatorListener() {
+//                    @Override
+//                    public void onAnimationStart(Animator animator) {
+//                        view.setVisibility(View.INVISIBLE);
+//                    }
+//
+//                    @Override
+//                    public void onAnimationEnd(Animator animator) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationCancel(Animator animator) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationRepeat(Animator animator) {
+//
+//                    }
+//                })
                 .start();
 
         // increase the offset distance for the next view
-        offset *= 1.5f;
     }
 
 }
