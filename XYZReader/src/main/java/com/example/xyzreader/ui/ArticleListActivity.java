@@ -305,7 +305,7 @@ public class ArticleListActivity extends AppCompatActivity implements
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
                     .placeholder(getDrawable(R.drawable.empty_detail))
                     .resize(500,500)
-                    .centerInside()
+                    .centerCrop()
                     .into(holder.thumbnailView);
             Log.d(TAG,"Trying to get data from " + mCursor.getString(ArticleLoader.Query.THUMB_URL));
         }
