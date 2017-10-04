@@ -261,7 +261,11 @@ public class ArticleListActivity extends AppCompatActivity implements
                 public void onClick(View view) {
                     if (!mIsRefreshing) {
                         mDetailActivityCachedUrlID = getItemId(vh.getAdapterPosition());
-                        getLoaderManager().restartLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID, null, ArticleListActivity.this);
+                        if(getLoaderManager().getLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID)!=null){
+                            getLoaderManager().restartLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID, null, ArticleListActivity.this);
+                        }else {
+                            getLoaderManager().initLoader(ArticleDetailFragment.LOADER_ID_ARTICLE_WITH_ID,null,ArticleListActivity.this);
+                        }
 
 
                         ImageView transitionImageView = (ImageView) view.findViewById(R.id.thumbnail);
