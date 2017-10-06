@@ -10,6 +10,6 @@ This was the [starting point](https://github.com/udacity/xyz-reader-starter-code
 
 Just build and install as any other Android app.
 
-## Download (App Store) 
+## Download (Play Store) 
 
-If you prefer, you can download it [here]().
+If you prefer, you can download it [here](https://play.google.com/store/apps/details?id=com.rafaelalves.xyzreader&rdid=com.rafaelalves.xyzreader).
